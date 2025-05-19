@@ -145,6 +145,7 @@ class WhatsAppController extends Controller
                     ]
                 ]
             ]
+            
         ];
         $maxAttempts = 3;
         $attempt = 0;
