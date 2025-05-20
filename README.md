@@ -1,61 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Envio de SMS e WhatsApp
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto é um sistema web desenvolvido em Laravel para envio de mensagens SMS e WhatsApp, com painel de relatórios, tentativas automáticas de reenvio e feedback visual ao usuário.
 
-## About Laravel
+## Funcionalidades
+- Envio de SMS e WhatsApp para números nacionais (Brasil)
+- Até 3 tentativas automáticas em caso de falha (REJECTED)
+- Feedback visual em tempo real para cada tentativa de envio
+- Relatório de envios com status, tipo, descrição da API e data
+- Interface  responsiva (Bootstrap)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Como usar
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Instalação
+1. Clone o repositório:
+   ```sh
+   git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
+   cd SEU_REPOSITORIO
+   ```
+2. Instale as dependências:
+   ```sh
+   composer install
+   ```
+3. Copie o arquivo `.env.example` para `.env` e configure o banco de dados e as chaves da API Infobip.
+   ```sh
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Execute as migrations:
+   ```sh
+   php artisan migrate
+   ```
+5. Inicie o servidor:
+   ```sh
+   php artisan serve
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Uso do sistema
+- Acesse `http://localhost:8000` no navegador.
+- Preencha o número e a mensagem.
+- Clique em "Enviar SMS" ou "Enviar WhatsApp".
+- O sistema tentará enviar até 3 vezes em caso de erro e mostrará popups informando o status de cada tentativa.
+- Consulte o relatório de envios para ver o histórico.
 
-## Learning Laravel
+### 3. Configuração da API Infobip
+- Configure as credenciais da API Infobip no arquivo `.env` ou diretamente nos controllers (`SmsController` e `WhatsAppController`).
+- Certifique-se de que os números de origem e destino estejam autorizados na sua conta Infobip.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 4. Observações
+- O sistema está preparado para lidar com erros como REJECTED, REJECTED_PREFIX_MISSING, etc.
+- O frontend utiliza AJAX para feedback em tempo real.
+- O relatório mostra apenas as informações essenciais (número, tipo, descrição da API e data).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 5. Banco de Dados
+- O sistema utiliza um banco de dados relacional (MySQL) configurado no arquivo `.env`.
+- Para ambiente de desenvolvimento, você pode usar MySQL conforme sua necessidade.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Exemplo de configuração para MySQL no `.env`:
+  ```env
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=nome_do_banco
+  DB_USERNAME=usuario
+  DB_PASSWORD=senha
+  ```
+- Após configurar, execute as migrations para criar as tabelas necessárias:
+  ```sh
+  php artisan migrate
+  ```
 
-## Laravel Sponsors
+### 6. Exemplo de Migration para MySQL
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Se você quiser criar a tabela de SMS manualmente em um banco MySQL, utilize a migration abaixo:
 
-### Premium Partners
+```php
+Schema::create('sms', function (Blueprint $table) {
+    $table->id();
+    $table->string('numero');
+    $table->text('mensagem');
+    $table->string('tipo_de_mensagem')->nullable();
+    $table->string('status')->nullable();
+    $table->text('api_description')->nullable();
+    $table->text('resposta_api')->nullable();
+    $table->timestamp('data_envio')->nullable();
+    $table->timestamps();
+});
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Salve este código em um arquivo de migration (ex: `database/migrations/2025_05_16_000000_create_sms_table.php`) e execute:
+```sh
+php artisan migrate
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

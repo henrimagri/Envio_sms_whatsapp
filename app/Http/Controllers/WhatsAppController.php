@@ -80,7 +80,7 @@ class WhatsAppController extends Controller
                     $apiDescription = 'Mensagem não entregue: ' . ($status['description'] ?? 'Destino não registrado') . $tentativaMsg;
                     $attempt++;
                     if ($attempt < $maxAttempts) {
-                        sleep(1); // Aguarda 1 segundo antes de tentar novamente
+                        sleep(2); // Aguarda 1 segundo antes de tentar novamente
                     }
                 } else {
                     $apiDescription = json_encode($responseBody);
@@ -145,7 +145,7 @@ class WhatsAppController extends Controller
                     ]
                 ]
             ]
-            
+
         ];
         $maxAttempts = 3;
         $attempt = 0;
